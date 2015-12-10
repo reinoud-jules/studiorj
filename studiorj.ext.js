@@ -58,6 +58,11 @@ Number.prototype.igte = function(cutoff) {
 	This will find all images inside each article and scale it to exactly fit the selected element
 	which, in this case, is every article in section#listing. It will add absolute positioning to 
 	the image, relative positioning to it's parent. 
+	
+	
+	opts {
+		alignment: 'left' : 'center' : 'right' // defaults to 'center'
+	}
 
 /* ===================================== */
 
@@ -65,6 +70,9 @@ Number.prototype.igte = function(cutoff) {
 (function ( $ ) {
  
     $.fn.aspectBoxFit = function(opts) {
+		
+		opts = create_opts(opts, this);
+		
 		
 		this.css({
 			position: 'relative',
@@ -106,6 +114,17 @@ Number.prototype.igte = function(cutoff) {
 					tar_left = 0;
 				}
 				
+				switch(opts.alignment) {
+					case 'left' :
+					tar_left = 0;
+					break;
+					case 'right' :
+					tar_left = box_w - tar_w;
+					break;
+					default :
+					break;
+				}
+				
 				$(imgs[this.id]).css({
 					position: 'absolute',
 					top: tar_top,
@@ -121,5 +140,24 @@ Number.prototype.igte = function(cutoff) {
         
         return true;
     };
+    
+    function create_opts(opts, $box) {
+	    var alignments = ['left', 'center', 'right'];
+	    
+	    if(opts === undefined) {
+		    opts = {};
+	    }
+	    
+	    if(opts.alignment === undefined) {
+		    if(alignments.indexOf($box.attr('data-aspectboxfit-align')) != -1) {
+			    opts.alignment = $box.attr('data-aspectboxfit-align');
+		    } else {
+			    opts.alignment = 'center';
+		    }
+	    }
+	    
+	    console.log(opts);
+	    return opts;
+    }
  
 }( jQuery ));
